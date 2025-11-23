@@ -1,8 +1,20 @@
 class Beam
-  attr_reader :depth
+  attr_reader :start, :angle, :color, :depth, :ray, :dx, :dy
 
   def initialize(start:, angle:, color:, depth: 1)
     @start, @angle, @color, @depth = start, angle, color, depth
+
+    # Beam direction unit vector
+    ang_rad = angle.to_radians
+    @dx = Math.cos(ang_rad)
+    @dy = Math.sin(ang_rad)
+
+    # Define a ray that extendes well beyond the screen (for
+    # calculating intersections)
+    max_dist = Math.sqrt(($grid.w ** 2) + ($grid.h ** 2)) * 2
+    ex = start.x + dx * max_dist
+    ey = start.y + dy * max_dist
+    @ray = { x: start.x, y: start.y, x2: ex, y2: ey }
   end
 
   def primitive
@@ -11,7 +23,7 @@ class Beam
     dx = x2 - x1
     dy = y2 - y1
     length = Math.sqrt((dx * dx) + (dy * dy))
-    angle = Math.atan2(dy, dx) * 180 / Math::PI
+    angle = Math.atan2(dy, dx).to_radians
 
     {
       x: x1, y: y1,

@@ -4,6 +4,7 @@ class OptixGame
 
     render_beams
     render_emitters
+    render_components
   end
 
   def render_beams
@@ -15,6 +16,12 @@ class OptixGame
   def render_emitters
     @emitters.each do |emitter|
       @primitives << emitter.sprite
+    end
+  end
+
+  def render_components
+    @components.each do |component|
+      @primitives << component.sprite
     end
   end
 end
