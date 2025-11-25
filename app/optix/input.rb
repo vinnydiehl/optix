@@ -21,8 +21,12 @@ class OptixGame
   # Scroll to change the angle of a component
   def handle_scroll
     return unless (d = @mouse.wheel&.y)
+
+    # Hold shift to rotate faster
+    d /= 10 unless @kb.key_held.shift
+
     if (c = @component_held || component_under_mouse)
-      c.angle += d / 10
+      c.angle += d
     end
   end
 
