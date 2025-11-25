@@ -7,7 +7,7 @@ class OptixGame
       Receiver.new(pos: { x: 1100, y: 200 }, angle: 180, color: RED),
     ]
 
-    @emitters, @optical_objects = @components.partition { |c| c.is_a?(Emitter) }
+    @emitters = @components.grep(Emitter)
     @receivers = @components.grep(Receiver)
 
     # All components are movable for now
@@ -41,7 +41,7 @@ class OptixGame
         @beams << beam
 
         # Resultant beam(s)
-        queue += hit.object.on_light_hit(beam, hit.point, beam.depth + 1)
+        queue += hit.component.on_light_hit(beam, hit.point, beam.depth + 1)
       else
         # Beam goes offscreen
         beam.set_endpoint(:offscreen)
@@ -54,15 +54,15 @@ class OptixGame
     closest = nil
     closest_t = Float::INFINITY
 
-    @optical_objects.each do |object|
-      # Stop beam from hitting the same object twice
-      next if beam.last_hit == object
+    @components.each do |component|
+      # Stop beam from hitting the same component twice
+      next if beam.last_hit == component
 
-      intersection = case object.type
+      intersection = case component.type
       when :flat
-        Geometry.line_intersect(object.line, beam.ray)
+        Geometry.line_intersect(component.line, beam.ray)
       when :square
-        beam_intersect_rotated_rect(beam, object.rect, object.angle)
+        beam_intersect_rotated_rect(beam, component.rect, component.angle)
       end
 
       if intersection
@@ -70,7 +70,7 @@ class OptixGame
         if t < closest_t
           closest_t = t
           closest = {
-            object: object,
+            component: component,
             point: intersection,
           }
         end

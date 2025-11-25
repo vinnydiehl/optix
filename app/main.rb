@@ -4,8 +4,7 @@ SCENES = %w[game].freeze
    input].each { |f| require "app/optix/#{f}.rb" }
 
 %w[absorbent reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
-%w[component optical_object
-   emitter mirror receiver].each { |f| require "app/optix/components/#{f}.rb" }
+%w[component emitter mirror receiver].each { |f| require "app/optix/components/#{f}.rb" }
 %w[beam].each { |f| require "app/optix/light/#{f}.rb" }
 
 %w[scenes render].each { |dir| SCENES.each { |f| require "app/optix/#{dir}/#{f}.rb" } }

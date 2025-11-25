@@ -1,4 +1,4 @@
-class Receiver < OpticalObject
+class Receiver < Component
   include AbsorbentBehavior
 
   def initialize(data)

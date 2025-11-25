@@ -1,4 +1,4 @@
-class Mirror < OpticalObject
+class Mirror < Component
   include ReflectiveBehavior
 
   attr_reader :line
