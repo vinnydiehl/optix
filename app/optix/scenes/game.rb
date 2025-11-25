@@ -8,6 +8,7 @@ class OptixGame
     ]
 
     @emitters, @optical_objects = @components.partition { |c| c.is_a?(Emitter) }
+    @receivers = @components.grep(Receiver)
 
     # All components are movable for now
     # @movable_components = @components.select(&:movable?)
@@ -20,6 +21,10 @@ class OptixGame
   end
 
   def propagate_beams
+    # Deactivate all receivers, their activation is calculated on
+    # a frame-by-frame basis
+    @receivers.each(&:deactivate)
+
     @beams = []
 
     # Emit initial beams
