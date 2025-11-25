@@ -133,11 +133,70 @@ class OptixGame
     ix = un_lx + un_dx * t
     iy = un_ly + un_dy * t
 
+    # Determine which side was hit:
+    # Normal in unrotated space
+    hit_normal_local =
+      if ix.abs > iy.abs
+        if ix > 0
+          # Right side ("front")
+          [1, 0]
+        else
+          # Left side ("back")
+          [-1, 0]
+        end
+      else
+        if iy > 0
+          # Bottom side ("right")
+          [0, 1]
+        else
+          # Top side ("left")
+          [0, -1]
+        end
+      end
+    # Rotate normal back into world space
+    hit_normal_world = {
+      x: hit_normal_local[0] * cos_a - hit_normal_local[1] * sin_a,
+      y: hit_normal_local[0] * sin_a + hit_normal_local[1] * cos_a,
+    }
+    # Normalize
+    len = Math.sqrt(hit_normal_world[:x]**2 + hit_normal_world[:y]**2)
+    nx = hit_normal_world[:x] / len
+    ny = hit_normal_world[:y] / len
+    # Rect's "front" normal (angle == 0 -> (1,0))
+    rect_front = {
+      x: Math.cos(ang),
+      y: Math.sin(ang),
+    }
+    # Left and right normals
+    rect_right = {
+      x: Math.cos(ang - (Math::PI / 2)),
+      y: Math.sin(ang - (Math::PI / 2)),
+    }
+    rect_left = {
+      x: Math.cos(ang + (Math::PI / 2)),
+      y: Math.sin(ang + (Math::PI / 2)),
+    }
+    # Back normal
+    rect_back = {
+      x: -rect_front[:x],
+      y: -rect_front[:y],
+    }
+    # Dot products
+    dot = {
+      front: nx * rect_front[:x] + ny * rect_front[:y],
+      back: nx * rect_back[:x] + ny * rect_back[:y],
+      left: nx * rect_left[:x] + ny * rect_left[:y],
+      right: nx * rect_right[:x] + ny * rect_right[:y],
+    }
+    # Pick the side with the strongest alignment
+    side = dot.max_by { |_, v| v }.first
+
     # Rotate back into world space to get the coordinates
     # of the intersection
     {
       x: ix * cos_a - iy * sin_a + cx,
       y: ix * sin_a + iy * cos_a + cy,
+      side: side,
     }
   end
 end
