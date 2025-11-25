@@ -2,9 +2,11 @@ class OptixGame
   def game_init
     @components = [
       Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
+      Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
       Mirror.new(pos: { x: 1000, y: 270 }, angle: 70),
       Mirror.new(pos: { x: 800, y: 200 }, angle: 10),
       Receiver.new(pos: { x: 1100, y: 200 }, angle: 180, color: RED),
+      Receiver.new(pos: { x: 600, y: 350 }, angle: 135, color: BLUE),
     ]
 
     @emitters = @components.grep(Emitter)

@@ -4,5 +4,6 @@ end
 
 WHITE = grayscale(255)
 RED = { r: 255, g: 0, b: 0 }
+BLUE = { r: 0, g: 0, b: 255 }
 
 BACKGROUND_COLOR = grayscale(63)
