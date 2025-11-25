@@ -1,5 +1,6 @@
 class Component
   attr_accessor :pos, :angle
+  attr_reader :type
 
   def initialize(data)
     @pos = { x: data[:pos].x, y: data[:pos].y }

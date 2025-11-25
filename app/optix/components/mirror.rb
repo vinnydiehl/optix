@@ -6,6 +6,7 @@ class Mirror < OpticalObject
   def initialize(data)
     super(data)
 
+    @type = :flat
     @movable = true
     set_line
   end

@@ -3,9 +3,9 @@ SCENES = %w[game].freeze
 %w[constants colors optix
    input].each { |f| require "app/optix/#{f}.rb" }
 
-%w[reflective_behavior].each { |f| require "app/optix/behaviors/#{f}.rb" }
+%w[absorbent reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
 %w[component optical_object
-   emitter mirror].each { |f| require "app/optix/components/#{f}.rb" }
+   emitter mirror receiver].each { |f| require "app/optix/components/#{f}.rb" }
 %w[beam].each { |f| require "app/optix/light/#{f}.rb" }
 
 %w[scenes render].each { |dir| SCENES.each { |f| require "app/optix/#{dir}/#{f}.rb" } }
