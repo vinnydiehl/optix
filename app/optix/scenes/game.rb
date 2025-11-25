@@ -7,9 +7,14 @@ class OptixGame
     ]
 
     @emitters, @optical_objects = @components.partition { |c| c.is_a?(Emitter) }
+
+    # All components are movable for now
+    # @movable_components = @components.select(&:movable?)
+    @movable_components = @components
   end
 
   def game_tick
+    handle_mouse_input
     propagate_beams
   end
 

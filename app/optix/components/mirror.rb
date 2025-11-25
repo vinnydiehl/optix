@@ -6,10 +6,12 @@ class Mirror < OpticalObject
   def initialize(data)
     super(data)
 
+    @movable = true
     set_line
   end
 
   def sprite
+    set_line
     {
       **line,
       **WHITE,

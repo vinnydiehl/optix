@@ -1,6 +1,7 @@
 SCENES = %w[game].freeze
 
-%w[constants colors optix].each { |f| require "app/optix/#{f}.rb" }
+%w[constants colors optix
+   input].each { |f| require "app/optix/#{f}.rb" }
 
 %w[reflective_behavior].each { |f| require "app/optix/behaviors/#{f}.rb" }
 %w[component optical_object
