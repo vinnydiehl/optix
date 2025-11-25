@@ -1,12 +1,12 @@
 class OptixGame
   def game_init
-    @emitters = [
-      Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED)
-    ]
     @components = [
+      Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
       Mirror.new(pos: { x: 1000, y: 270 }, angle: 70),
       Mirror.new(pos: { x: 800, y: 200 }, angle: 10),
     ]
+
+    @emitters, @optical_objects = @components.partition { |c| c.is_a?(Emitter) }
   end
 
   def game_tick
@@ -30,7 +30,7 @@ class OptixGame
         @beams << beam
 
         # Resultant beam(s)
-        queue += hit.component.on_light_hit(beam, hit.point, beam.depth + 1)
+        queue += hit.object.on_light_hit(beam, hit.point, beam.depth + 1)
       else
         # Beam goes offscreen
         beam.set_endpoint(:offscreen)
@@ -43,21 +43,21 @@ class OptixGame
     closest = nil
     closest_t = Float::INFINITY
 
-    @components.each do |component|
-      c_line = component.line
-      cx, cy = component.pos.x, component.pos.y
+    @optical_objects.each do |object|
+      c_line = object.line
+      cx, cy = object.pos.x, object.pos.y
 
       # quick check: is object in front of beam start? (dot product)
       vx, vy = cx - beam.start.x, cy - beam.start.y
       t = vx * beam.dx + vy * beam.dy
       next if t <= 0 # object is behind the ray origin
 
-      if (intersection = Geometry.line_intersect(component.line, beam.ray))
+      if (intersection = Geometry.line_intersect(object.line, beam.ray))
         # we use t as the measure of distance along the ray to the object's closest approach
         if t < closest_t
           closest_t = t
           closest = {
-            component: component,
+            object: object,
             point: intersection,
           }
         end

@@ -1,6 +1,7 @@
-class Emitter
-  def initialize(pos:, angle:, color:)
-    @pos, @angle, @color = pos, angle, color
+class Emitter < Component
+  def initialize(data)
+    super(data)
+    @color = data[:color]
   end
 
   def beam

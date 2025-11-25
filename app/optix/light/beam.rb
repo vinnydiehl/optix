@@ -17,7 +17,7 @@ class Beam
     @ray = { x: start.x, y: start.y, x2: ex, y2: ey }
   end
 
-  def primitive
+  def sprite
     x1, x2, y1, y2 = @start.x, @end.x, @start.y, @end.y
 
     dx = x2 - x1

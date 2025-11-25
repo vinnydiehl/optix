@@ -1,8 +1,5 @@
-class OpticalObject
-  attr_accessor :pos, :angle
-
+class OpticalObject < Component
   def initialize(data)
-    @pos = { x: data[:pos].x, y: data[:pos].y }
-    @angle = data[:angle]
+    super(data)
   end
 end
