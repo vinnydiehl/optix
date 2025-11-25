@@ -4,7 +4,7 @@ class Receiver < Component
   def initialize(data)
     super(data)
 
-    @type = :square
+    @type = :rect
     @color = data[:color]
     @activated = false
   end
@@ -21,6 +21,9 @@ class Receiver < Component
     {
       x: @pos.x, y: @pos.y,
       w: COMPONENT_SIZE, h: COMPONENT_SIZE,
+      angle: @angle,
+      anchor_x: 0.5, anchor_y: 0.5,
+      angle_anchor_x: 0.5, angle_anchor_y: 0.5,
     }
   end
 
@@ -29,9 +32,6 @@ class Receiver < Component
 
     {
       **rect,
-      angle: @angle,
-      anchor_x: 0.5, anchor_y: 0.5,
-      angle_anchor_x: 0.5, angle_anchor_y: 0.5,
       path: "sprites/square/white.png",
       **color,
     }

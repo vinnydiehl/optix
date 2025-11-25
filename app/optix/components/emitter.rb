@@ -3,8 +3,9 @@ class Emitter < Component
 
   def initialize(data)
     super(data)
+
+    @type = :rect
     @color = data[:color]
-    @type = :square
   end
 
   def beam
@@ -15,15 +16,15 @@ class Emitter < Component
     {
       x: @pos.x, y: @pos.y,
       w: COMPONENT_SIZE, h: COMPONENT_SIZE,
+      angle: @angle,
+      anchor_x: 0.5, anchor_y: 0.5,
+      angle_anchor_x: 0.5, angle_anchor_y: 0.5,
     }
   end
 
   def sprite
     {
       **rect,
-      angle: @angle,
-      anchor_x: 0.5, anchor_y: 0.5,
-      angle_anchor_x: 0.5, angle_anchor_y: 0.5,
       path: "sprites/circle/white.png",
       **@color,
     }

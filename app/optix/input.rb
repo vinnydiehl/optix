@@ -29,7 +29,12 @@ class OptixGame
   # Returns the movable component under the mouse, or nil.
   def component_under_mouse
     @movable_components.find do |c|
-      Geometry.intersect_circle?(Geometry.rect_to_circle(@mouse.rect), c.hitbox)
+      case c.type
+      when :rect
+        point_in_rotated_rect?(@mouse.position, c.rect)
+      else
+        Geometry.intersect_circle?(Geometry.rect_to_circle(@mouse.rect), c.hitbox)
+      end
     end
   end
 end
