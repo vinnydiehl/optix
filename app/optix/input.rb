@@ -22,7 +22,7 @@ class OptixGame
   def handle_scroll
     return unless (d = @mouse.wheel&.y)
     if (c = @component_held || component_under_mouse)
-      c.angle += d
+      c.angle += d / 10
     end
   end
 
