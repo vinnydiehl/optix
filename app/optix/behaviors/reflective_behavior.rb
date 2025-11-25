@@ -8,7 +8,8 @@ module ReflectiveBehavior
         start: point,
         angle: reflect_angle,
         color: beam.color,
-        depth: depth
+        depth: depth,
+        last_hit: self,
       )
     ]
   end

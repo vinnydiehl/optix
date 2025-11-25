@@ -49,16 +49,11 @@ class OptixGame
     closest_t = Float::INFINITY
 
     @optical_objects.each do |object|
-      c_line = object.line
-      cx, cy = object.pos.x, object.pos.y
-
-      # quick check: is object in front of beam start? (dot product)
-      vx, vy = cx - beam.start.x, cy - beam.start.y
-      t = vx * beam.dx + vy * beam.dy
-      next if t <= 0 # object is behind the ray origin
+      # Stop beam from hitting the same object twice
+      next if beam.last_hit == object
 
       if (intersection = Geometry.line_intersect(object.line, beam.ray))
-        # we use t as the measure of distance along the ray to the object's closest approach
+        t = Geometry.distance_squared(beam.start, intersection)
         if t < closest_t
           closest_t = t
           closest = {

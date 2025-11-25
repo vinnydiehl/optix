@@ -1,8 +1,9 @@
 class Beam
-  attr_reader :start, :angle, :color, :depth, :ray, :dx, :dy
+  attr_reader :start, :angle, :color, :depth, :ray, :dx, :dy, :last_hit
 
-  def initialize(start:, angle:, color:, depth: 1)
-    @start, @angle, @color, @depth = start, angle, color, depth
+  def initialize(start:, angle:, color:, depth: 1, last_hit: nil)
+    @start, @angle, @color, @depth, @last_hit =
+      start, angle, color, depth, last_hit
 
     # Beam direction unit vector
     ang_rad = angle.to_radians
