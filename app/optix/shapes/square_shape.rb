@@ -1,6 +1,7 @@
 module SquareShape
   def initialize(data)
     super(data)
+
     @type = :rect
   end
 
