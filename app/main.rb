@@ -4,7 +4,8 @@ SCENES = %w[game].freeze
 %w[flat square].each { |f| require "app/optix/shapes/#{f}_shape.rb" }
 
 %w[component
-   emitter mirror receiver wall].each { |f| require "app/optix/components/#{f}.rb" }
+   combiner emitter mirror
+   receiver wall].each { |f| require "app/optix/components/#{f}.rb" }
 %w[beam color].each { |f| require "app/optix/light/#{f}.rb" }
 
 %w[constants colors optix

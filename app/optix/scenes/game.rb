@@ -1,19 +1,24 @@
 class OptixGame
   def game_init
     @components = [
-      Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
+      # Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
       Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
       Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
+      Emitter.new(pos: { x: 300, y: 500 }, angle: 270, color: GREEN),
       Mirror.new(pos: { x: 50, y: 50 }, angle: 45),
       Mirror.new(pos: { x: 100, y: 50 }, angle: 45),
       Mirror.new(pos: { x: 150, y: 50 }, angle: 45),
       Mirror.new(pos: { x: 200, y: 50 }, angle: 45),
-      Receiver.new(pos: { x: 1100, y: 200 }, angle: 180, color: RED),
+      Combiner.new(pos: { x: 250, y: 50 }, angle: 0),
+      Receiver.new(pos: { x: 1100, y: 150 }, angle: 180, color: RED),
       Receiver.new(pos: { x: 600, y: 350 }, angle: 90, color: BLUE),
+      Receiver.new(pos: { x: 800, y: 250 }, angle: 180, color: RED + BLUE),
     ]
 
     @emitters = @components.grep(Emitter)
     @receivers = @components.grep(Receiver)
+    @resettables = @components.select { |c| c.respond_to?(:reset) }
+    @compilers = @components.select { |c| c.respond_to?(:compile) }
 
     # All components are movable for now
     # @movable_components = @components.select(&:movable?)
@@ -26,15 +31,19 @@ class OptixGame
   end
 
   def propagate_beams
-    # Deactivate all receivers, their activation is calculated on
-    # a frame-by-frame basis
-    @receivers.each(&:deactivate)
+    # Any components that can be reset should be, so each frame
+    # propagates the beams from square one
+    @resettables.each(&:reset)
 
     @beams = []
 
     # Emit initial beams
-    queue = @emitters.map(&:beam)
+    propagate_set(@emitters.map(&:beam))
+    # Second pass for compiled beams
+    propagate_set(@compilers.map(&:compile).compact)
+  end
 
+  def propagate_set(queue)
     # BFS-like propagation
     until queue.empty?
       beam = queue.shift

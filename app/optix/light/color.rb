@@ -9,12 +9,12 @@ class Color
 
   # Additive mixing
   def +(other)
-    Color.new(@r + other.r, @g + other.g, @b + other.b)
+    Color.new(r: @r + other.r, g: @g + other.g, b: @b + other.b)
   end
 
   # Scale intensity
   def *(scalar)
-    Color.new(@r * scalar, @g * scalar, @b * scalar)
+    Color.new(r: @r * scalar, g: @g * scalar, b: @b * scalar)
   end
 
   def ==(other)

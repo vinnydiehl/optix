@@ -6,7 +6,11 @@ class Receiver < Component
     super(data)
 
     @color = data[:color]
-    @activated = false
+    reset
+  end
+
+  def reset
+    deactivate
   end
 
   def on_light_hit(beam, point, depth)
