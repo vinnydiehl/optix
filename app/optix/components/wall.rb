@@ -23,7 +23,7 @@ class Wall < Component
     {
       **rect,
       path: :solid,
-      **BLACK,
+      **BLACK.to_h,
     }
   end
 end

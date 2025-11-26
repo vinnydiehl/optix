@@ -15,7 +15,7 @@ class Mirror < Component
     set_line
     {
       **line,
-      **WHITE,
+      **WHITE.to_h,
     }
   end
 

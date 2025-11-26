@@ -32,7 +32,7 @@ class Beam
       angle: @angle,
       anchor_x: 0, anchor_y: 0.5,
       angle_anchor_x: 0, angle_anchor_y: 0.5,
-      **@color,
+      **@color.to_h,
       path: :solid,
     }
   end

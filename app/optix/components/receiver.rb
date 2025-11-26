@@ -33,7 +33,7 @@ class Receiver < Component
     {
       **rect,
       path: "sprites/square/white.png",
-      **color,
+      **color.to_h,
     }
   end
 

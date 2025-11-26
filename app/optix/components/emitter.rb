@@ -26,7 +26,7 @@ class Emitter < Component
     {
       **rect,
       path: "sprites/circle/white.png",
-      **@color,
+      **@color.to_h,
     }
   end
 end
