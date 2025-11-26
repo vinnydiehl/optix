@@ -1,6 +1,7 @@
 SCENES = %w[game].freeze
 
 %w[absorbent reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
+%w[square].each { |f| require "app/optix/shapes/#{f}_shape.rb" }
 
 %w[component
    emitter mirror receiver wall].each { |f| require "app/optix/components/#{f}.rb" }
