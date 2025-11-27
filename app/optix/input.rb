@@ -7,14 +7,23 @@ class OptixGame
 
   def handle_lmb
     if @mouse.key_down.left
-      @component_held = component_under_mouse
+      if (@component_held = component_under_mouse)
+        @component_held_offset = {
+          x: @mouse.position.x - @component_held.pos.x,
+          y: @mouse.position.y - @component_held.pos.y,
+        }
+      end
     end
 
     if @component_held
       if @mouse.key_held.left
-        @component_held.pos = @mouse.position.slice(:x, :y)
+        @component_held.pos = {
+          x: @mouse.position.x - @component_held_offset.x,
+          y: @mouse.position.y - @component_held_offset.y,
+        }
       elsif @mouse.key_up.left
         @component_held = nil
+        @component_held_offset = nil
       end
     end
   end
