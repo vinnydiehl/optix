@@ -3,7 +3,7 @@ SCENES = %w[game].freeze
 require "lib/dr_ext/geometry.rb"
 
 %w[absorbent compiler
-   reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
+   filter reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
 %w[flat square].each { |f| require "app/optix/shapes/#{f}_shape.rb" }
 
 %w[component
