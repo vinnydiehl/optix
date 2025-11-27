@@ -1,33 +1,19 @@
-class OptixGame
-  # Returns whether not +point+ exists within +rect+. +rect+ must
-  # contain an :angle and be anchored in the center.
-  def point_in_rotated_rect?(point, rect)
-    cx, cy = rect.x, rect.y
-    w, h = rect.w, rect.h
-    ang = rect.angle.to_radians
+module Geometry
+  # Returns whether the +point+ exists within +rect+.
+  # +rect+ must contain an :angle and be anchored in the center.
+  def self.point_in_rotated_rect?(point, rect)
+    local = world_to_local(point, rect)
 
-    # Translate point into rect-centered coordinates
-    dx = point.x - cx
-    dy = point.y - cy
+    half_w = rect.w / 2
+    half_h = rect.h / 2
 
-    # Unrotate the point by -angle
-    cos_a = Math.cos(-ang)
-    sin_a = Math.sin(-ang)
-
-    rx = dx * cos_a - dy * sin_a
-    ry = dx * sin_a + dy * cos_a
-
-    # Check bounds in local space
-    half_w = w / 2.0
-    half_h = h / 2.0
-
-    rx.abs <= half_w && ry.abs <= half_h
+    local.x.abs <= half_w && local.y.abs <= half_h
   end
 
   # If +beam+ intersects the rotated rect, return a Hash with the
   # point of intersection, and the side that the beam hit.
   # +rect+ must contain an :angle and be anchored in the center.
-  def beam_intersect_rotated_rect(beam, rect)
+  def self.beam_intersect_rotated_rect(beam, rect)
     lx, ly = beam.start.x, beam.start.y
     dx, dy = beam.dx, beam.dy
 
@@ -54,8 +40,8 @@ class OptixGame
     tmin = -Float::INFINITY
     tmax = Float::INFINITY
     # Axis-aligned half extents
-    hw = w / 2.0
-    hh = h / 2.0
+    hw = w / 2
+    hh = h / 2
     # X slabs
     if un_dx.abs < 1e-9
       return nil if un_lx < -hw || un_lx > hw
@@ -89,21 +75,11 @@ class OptixGame
     # Normal in unrotated space
     hit_normal_local =
       if ix.abs > iy.abs
-        if ix > 0
-          # Right side ("front")
-          [1, 0]
-        else
-          # Left side ("back")
-          [-1, 0]
-        end
+        # Right or left normal ("front" or "back")
+        ix > 0 ? [1, 0] : [-1, 0]
       else
-        if iy > 0
-          # Bottom side ("right")
-          [0, 1]
-        else
-          # Top side ("left")
-          [0, -1]
-        end
+        # Bottom or top normal ("right" or "left")
+        iy > 0 ? [0, 1] : [0, -1]
       end
     # Rotate normal back into world space
     hit_normal_world = {
@@ -145,10 +121,58 @@ class OptixGame
 
     # Rotate back into world space to get the coordinates
     # of the intersection
+    local_to_world({ x: ix, y: iy }, rect).merge(side: side)
+  end
+
+  # Returns the four corners of a rotated rectangle in world space.
+  def self.rotated_rect_corners(rect)
+    cx, cy = rect.x, rect.y
+    hw, hh = rect.w / 2, rect.h / 2
+    ang = rect[:angle].to_radians
+    cos_a = Math.cos(ang)
+    sin_a = Math.sin(ang)
+
+    [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]].map do |lx, ly|
+      {
+        x: cx + lx * cos_a - ly * sin_a,
+        y: cy + lx * sin_a + ly * cos_a,
+      }
+    end
+  end
+
+  # Returns the index of the corner closest to the given point.
+  def self.closest_rect_corner_index(wall, point)
+    corners = rotated_rect_corners(wall.rect)
+    corners.each_with_index.min_by { |c, _i| distance_squared(c, point) }[1]
+  end
+
+  # Converts a point from world coordinates into rectangle-local coordinates.
+  # Expects rect to have :x, :y, and :angle.
+  def self.world_to_local(point, rect)
+    cx, cy = rect.x, rect.y
+    ang = rect.angle.to_radians
+    cos_a = Math.cos(ang)
+    sin_a = Math.sin(ang)
+
+    dx = point.x - cx
+    dy = point.y - cy
+
     {
-      x: ix * cos_a - iy * sin_a + cx,
-      y: ix * sin_a + iy * cos_a + cy,
-      side: side,
+      x: dx * cos_a + dy * sin_a,
+      y: -dx * sin_a + dy * cos_a,
+    }
+  end
+
+  # Converts a point from rectangle-local coordinates back to world coordinates.
+  def self.local_to_world(local_point, rect)
+    cx, cy = rect.x, rect.y
+    ang = rect.angle.to_radians
+    cos_a = Math.cos(ang)
+    sin_a = Math.sin(ang)
+
+    {
+      x: cx + local_point.x * cos_a - local_point.y * sin_a,
+      y: cy + local_point.x * sin_a + local_point.y * cos_a,
     }
   end
 end

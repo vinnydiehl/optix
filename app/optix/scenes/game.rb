@@ -1,7 +1,7 @@
 class OptixGame
   def game_init
     @components = [
-      # Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
+      Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
       Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
       Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
       Emitter.new(pos: { x: 300, y: 500 }, angle: 270, color: GREEN),
@@ -113,7 +113,7 @@ class OptixGame
       when :flat
         Geometry.line_intersect(component.line, beam.ray)
       when :rect
-        beam_intersect_rotated_rect(beam, component.rect)
+        Geometry.beam_intersect_rotated_rect(beam, component.rect)
       end
 
       if intersection
