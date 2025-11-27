@@ -4,6 +4,8 @@ class Splitter < Component
 
   def initialize(data)
     super(data)
+
+    @movable = true
   end
 
   def compile
