@@ -11,7 +11,8 @@ class OptixGame
       Mirror.new(pos: { x: 50, y: 150 }, angle: 45),
       Mirror.new(pos: { x: 50, y: 200 }, angle: 45),
       Combiner.new(pos: { x: 50, y: 250 }, angle: 0),
-      Filter.new(pos: { x: 50, y: 300 }, angle: 90, color: RED),
+      Splitter.new(pos: { x: 50, y: 300 }, angle: 0),
+      Filter.new(pos: { x: 50, y: 350 }, angle: 90, color: RED),
       Receiver.new(pos: { x: 1100, y: 150 }, angle: 180, color: RED),
       Receiver.new(pos: { x: 600, y: 350 }, angle: 90, color: BLUE),
       Receiver.new(pos: { x: 800, y: 250 }, angle: 180, color: MAGENTA),
@@ -19,7 +20,6 @@ class OptixGame
 
     @emitters = @components.grep(Emitter)
     @receivers = @components.grep(Receiver)
-    @resettables = @components.select { |c| c.respond_to?(:reset) }
     @compilers = @components.select { |c| c.respond_to?(:compile) }
 
     # All components are movable for now
@@ -33,16 +33,51 @@ class OptixGame
   end
 
   def propagate_beams
-    # Any components that can be reset should be, so each frame
-    # propagates the beams from square one
-    @resettables.each(&:reset)
+    @compilers.each(&:reset)
+    # Track last known compiler output color
+    last_colors = @compilers.map { |c| [c, nil] }.to_h
 
-    @beams = []
+    # I'm not entirely sure that this is necessary, but I was fighting
+    # an infinite loop implementing this, so I'm leaving it for now, with
+    # a warning if it gets triggered
+    iteration = 0
+    max_iterations = 20
+    loop do
+      iteration += 1
+      if iteration > max_iterations
+        puts "Warning: compiler propagation hit iteration cap #{max_iterations}"
+        break
+      end
 
-    # Emit initial beams
-    propagate_set(@emitters.map(&:beam))
-    # Second pass for compiled beams
-    propagate_set(@compilers.map(&:compile).compact)
+      @beams = []
+      # Need to reset receivers at the beginning of each pass so they don't
+      # activate due to an old compiler beam which was superceded in a later pass
+      @receivers.each(&:reset)
+
+      # First, propagate emitters
+      propagate_set(@emitters.map(&:beam))
+
+      # Then compile & propagate compiler outputs; the compilers haven't been
+      # reset, so if beams from the emitters hit them, they'll get added
+      # to the compiler's @colors
+      new_compiler_beams = @compilers.flat_map { |c| c.compile }.compact
+
+      # Break if no compilers are active and emitters produced everything
+      break if new_compiler_beams.empty? && last_colors.values.all?(&:nil?)
+
+      # Now propagate compiler-generated beams
+      propagate_set(new_compiler_beams)
+
+      # Detect if any compiler’s output color changed, and track the last
+      # color if so
+      changed = @compilers.any? do |comp|
+        color = comp.compile&.first&.color
+        last_colors[comp].tap { last_colors[comp] = color } != color
+      end
+
+      # If no compiler's output color changed, propagation has stabilized
+      break unless changed
+    end
   end
 
   def propagate_set(queue)

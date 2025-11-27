@@ -1,4 +1,4 @@
-class Combiner < Component
+class Splitter < Component
   include CompilerBehavior
   include SquareShape
 
@@ -8,21 +8,21 @@ class Combiner < Component
 
   def compile
     if active?
-      [
+      [@angle - 45, @angle + 45].map do |angle|
         Beam.new(
           start: @pos,
-          angle: @angle,
+          angle: angle,
           color: color_sum,
           last_hit: self,
         )
-      ]
+      end
     end
   end
 
   def sprite
     {
       **rect,
-      path: "sprites/triangle/black.png",
+      path: "sprites/triangle/gray.png",
     }
   end
 end

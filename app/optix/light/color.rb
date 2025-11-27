@@ -18,7 +18,7 @@ class Color
   end
 
   def ==(other)
-    @r == other.r && @g == other.g && @b == other.b
+    @r == other&.r && @g == other&.g && @b == other&.b
   end
 
   def filter(other)
