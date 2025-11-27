@@ -19,6 +19,8 @@ class Beam
   end
 
   def sprite
+    return if @color == BLACK
+
     x1, x2, y1, y2 = @start.x, @end.x, @start.y, @end.y
 
     dx = x2 - x1

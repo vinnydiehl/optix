@@ -9,4 +9,8 @@ RED = Color.new(r: 255, g: 0, b: 0)
 GREEN = Color.new(r: 0, g: 255, b: 0)
 BLUE = Color.new(r: 0, g: 0, b: 255)
 
+YELLOW = RED + GREEN
+CYAN = GREEN + BLUE
+MAGENTA = RED + BLUE
+
 BACKGROUND_COLOR = grayscale(63)

@@ -21,6 +21,14 @@ class Color
     @r == other.r && @g == other.g && @b == other.b
   end
 
+  def filter(other)
+    Color.new(
+      r: [@r, other.r].min,
+      g: [@g, other.g].min,
+      b: [@b, other.b].min,
+    )
+  end
+
   def to_h
     { r: @r, g: @g, b: @b }
   end
