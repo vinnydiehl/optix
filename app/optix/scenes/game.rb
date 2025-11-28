@@ -5,14 +5,15 @@ class OptixGame
       Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
       Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
       Emitter.new(pos: { x: 300, y: 500 }, angle: 270, color: GREEN),
-      Emitter.new(pos: { x: 200, y: 150 }, angle: 0, color: MAGENTA),
+      Emitter.new(pos: { x: 200, y: 150 }, angle: 0, color: WHITE),
       Mirror.new(pos: { x: 50, y: 50 }, angle: 45),
       Mirror.new(pos: { x: 50, y: 100 }, angle: 45),
       Mirror.new(pos: { x: 50, y: 150 }, angle: 45),
       Mirror.new(pos: { x: 50, y: 200 }, angle: 45),
       Combiner.new(pos: { x: 50, y: 250 }, angle: 0),
       Splitter.new(pos: { x: 50, y: 300 }, angle: 0),
-      Filter.new(pos: { x: 50, y: 350 }, angle: 90, color: RED),
+      Prism.new(pos: { x: 50, y: 350 }, angle: 0),
+      Filter.new(pos: { x: 50, y: 400 }, angle: 90, color: RED),
       Receiver.new(pos: { x: 1100, y: 150 }, angle: 180, color: RED),
       Receiver.new(pos: { x: 600, y: 350 }, angle: 90, color: BLUE),
       Receiver.new(pos: { x: 800, y: 250 }, angle: 180, color: MAGENTA),
@@ -20,6 +21,7 @@ class OptixGame
 
     @emitters = @components.grep(Emitter)
     @receivers = @components.grep(Receiver)
+    @prisms = @components.grep(Prism)
     @compilers = @components.select { |c| c.respond_to?(:compile) }
 
     # All components are movable for now
@@ -50,9 +52,10 @@ class OptixGame
       end
 
       @beams = []
-      # Need to reset receivers at the beginning of each pass so they don't
-      # activate due to an old compiler beam which was superceded in a later pass
+      # Need to reset these at the beginning of each pass so they don't
+      # read an old compiler beam which was superceded in a later pass
       @receivers.each(&:reset)
+      @prisms.each(&:reset)
 
       # First, propagate emitters
       propagate_set(@emitters.map(&:beam))
@@ -114,6 +117,8 @@ class OptixGame
         Geometry.line_intersect(component.line, beam.ray)
       when :rect
         Geometry.beam_intersect_rotated_rect(beam, component.rect)
+      when :triangle
+        Geometry.beam_intersect_rotated_triangle(beam, component.lines)
       end
 
       if intersection

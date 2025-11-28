@@ -6,9 +6,12 @@ require "lib/dr_ext/geometry.rb"
    filter reflective].each { |f| require "app/optix/behaviors/#{f}_behavior.rb" }
 %w[flat square].each { |f| require "app/optix/shapes/#{f}_shape.rb" }
 
-%w[component
-   combiner emitter filter mirror
-   receiver splitter wall].each { |f| require "app/optix/components/#{f}.rb" }
+%w[
+  component
+  combiner emitter filter mirror
+  prism receiver splitter wall
+].each { |f| require "app/optix/components/#{f}.rb" }
+
 %w[beam color].each { |f| require "app/optix/light/#{f}.rb" }
 
 %w[constants colors optix input].each { |f| require "app/optix/#{f}.rb" }

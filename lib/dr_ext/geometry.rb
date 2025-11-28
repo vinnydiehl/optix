@@ -1,7 +1,9 @@
 module Geometry
+  extend self
+
   # Returns whether the +point+ exists within +rect+.
   # +rect+ must contain an :angle and be anchored in the center.
-  def self.point_in_rotated_rect?(point, rect)
+  def point_in_rotated_rect?(point, rect)
     local = world_to_local(point, rect)
 
     half_w = rect.w / 2
@@ -13,7 +15,7 @@ module Geometry
   # If +beam+ intersects the rotated rect, return a Hash with the
   # point of intersection, and the side that the beam hit.
   # +rect+ must contain an :angle and be anchored in the center.
-  def self.beam_intersect_rotated_rect(beam, rect)
+  def beam_intersect_rotated_rect(beam, rect)
     lx, ly = beam.start.x, beam.start.y
     dx, dy = beam.dx, beam.dy
 
@@ -125,7 +127,7 @@ module Geometry
   end
 
   # Returns the four corners of a rotated rectangle in world space.
-  def self.rotated_rect_corners(rect)
+  def rotated_rect_corners(rect)
     cx, cy = rect.x, rect.y
     hw, hh = rect.w / 2, rect.h / 2
     ang = rect[:angle].to_radians
@@ -141,14 +143,14 @@ module Geometry
   end
 
   # Returns the index of the corner closest to the given point.
-  def self.closest_rect_corner_index(wall, point)
+  def closest_rect_corner_index(wall, point)
     corners = rotated_rect_corners(wall.rect)
     corners.each_with_index.min_by { |c, _i| distance_squared(c, point) }[1]
   end
 
   # Converts a point from world coordinates into rectangle-local coordinates.
   # Expects rect to have :x, :y, and :angle.
-  def self.world_to_local(point, rect)
+  def world_to_local(point, rect)
     cx, cy = rect.x, rect.y
     ang = rect.angle.to_radians
     cos_a = Math.cos(ang)
@@ -164,7 +166,7 @@ module Geometry
   end
 
   # Converts a point from rectangle-local coordinates back to world coordinates.
-  def self.local_to_world(local_point, rect)
+  def local_to_world(local_point, rect)
     cx, cy = rect.x, rect.y
     ang = rect.angle.to_radians
     cos_a = Math.cos(ang)
@@ -174,5 +176,56 @@ module Geometry
       x: cx + local_point.x * cos_a - local_point.y * sin_a,
       y: cy + local_point.x * sin_a + local_point.y * cos_a,
     }
+  end
+
+  def rotated_triangle_vertices(pos, side_length, angle)
+    # Offset the center by the distance to a vertex
+    offset = pos.dup.tap do |p|
+      p.x += side_length / Math.sqrt(3)
+    end
+
+    # Rotate the offset by the angles to each vertex (+ rotation)
+    [-30, 90, 210].map do |rotate_amount|
+      Geometry.rotate_point(offset, rotate_amount + angle, **pos)
+    end
+  end
+
+  def rotated_triangle_lines(pos, side_length, angle)
+    verts = rotated_triangle_vertices(pos, side_length, angle)
+
+    {
+      verts[0] => verts[1],
+      verts[1] => verts[2],
+      verts[2] => verts[0],
+    }.map do |v1, v2|
+      {
+        x: v1.x, y: v1.y,
+        x2: v2.x, y2: v2.y,
+      }
+    end
+  end
+
+  def beam_intersect_rotated_triangle(beam, lines)
+    intersections = lines.map do |line|
+      line_intersect(beam.ray, line)
+    end.compact
+
+    return if intersections.empty?
+
+    intersections.min_by { |pt| distance_squared(pt, beam.start) }
+  end
+
+  def beam_intersect_rotated_triangle_missed_line(beam, lines)
+    intersections = lines.find do |line|
+      !line_intersect(beam.ray, line)
+    end
+  end
+
+  def beam_intersect_rotated_triangle_far_line(beam, lines)
+    intersections = lines.sort_by do |line|
+      int = line_intersect(beam.ray, line)
+      next -Float::INFINITY unless int
+      distance_squared(beam.start, int)
+    end.last
   end
 end

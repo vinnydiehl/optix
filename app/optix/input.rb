@@ -55,7 +55,7 @@ class OptixGame
     d /= 10 if @kb.key_held.shift
 
     if (c = @component_held || component_under_mouse)
-      c.angle += d
+      c.angle = (c.angle + d) % 360
     end
   end
 
