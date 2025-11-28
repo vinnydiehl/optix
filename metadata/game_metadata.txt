@@ -4,3 +4,7 @@ gameid=optix
 gametitle=Optix
 version=0.1
 icon=metadata/icon.png
+
+scale_quality=2
+hd=true
+highdpi=true
