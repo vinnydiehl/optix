@@ -1,5 +1,5 @@
 class OptixGame
-  def game_init
+  def level_editor_init
     @components = [
       Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
       Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
@@ -29,7 +29,7 @@ class OptixGame
     @movable_components = @components
   end
 
-  def game_tick
+  def level_editor_tick
     handle_mouse_input
     propagate_beams
   end

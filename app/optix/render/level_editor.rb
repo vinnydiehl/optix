@@ -1,5 +1,5 @@
 class OptixGame
-  def render_game
+  def render_level_editor
     @outputs.background_color = BACKGROUND_COLOR.to_h
 
     render(@beams)

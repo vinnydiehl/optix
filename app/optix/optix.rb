@@ -22,7 +22,7 @@ class OptixGame
     @primitives = args.outputs.primitives
 
     @scene_stack = []
-    set_scene(:game, reset_stack: true)
+    set_scene(:level_editor, reset_stack: true)
   end
 
   def set_scene(scene, reset_stack: false)

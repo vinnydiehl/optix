@@ -1,4 +1,4 @@
-SCENES = %w[game].freeze
+SCENES = %w[level_editor].freeze
 
 require "lib/dr_ext/geometry.rb"
 
