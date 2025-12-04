@@ -14,3 +14,5 @@ CYAN = GREEN + BLUE
 MAGENTA = RED + BLUE
 
 BACKGROUND_COLOR = grayscale(63)
+
+UI_BASE_COLOR = grayscale(30)

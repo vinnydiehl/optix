@@ -4,6 +4,12 @@ class OptixGame
 
     render(@beams)
     render(@components)
+
+    render_level_editor_ui
+  end
+
+  def render_level_editor_ui
+    @primitives << @ui_base
   end
 
   def render(arr)

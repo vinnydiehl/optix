@@ -1,24 +1,46 @@
 class OptixGame
   def level_editor_init
-    @components = [
-      Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
-      Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
-      Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
-      Emitter.new(pos: { x: 300, y: 500 }, angle: 270, color: GREEN),
-      Emitter.new(pos: { x: 200, y: 150 }, angle: 0, color: WHITE),
-      Mirror.new(pos: { x: 50, y: 50 }, angle: 45),
-      Mirror.new(pos: { x: 50, y: 100 }, angle: 45),
-      Mirror.new(pos: { x: 50, y: 150 }, angle: 45),
-      Mirror.new(pos: { x: 50, y: 200 }, angle: 45),
-      Combiner.new(pos: { x: 50, y: 250 }, angle: 0),
-      Splitter.new(pos: { x: 50, y: 300 }, angle: 0),
-      Prism.new(pos: { x: 50, y: 350 }, angle: 0),
-      Filter.new(pos: { x: 50, y: 400 }, angle: 90, color: RED),
-      Receiver.new(pos: { x: 1100, y: 150 }, angle: 180, color: RED),
-      Receiver.new(pos: { x: 600, y: 350 }, angle: 90, color: BLUE),
-      Receiver.new(pos: { x: 800, y: 250 }, angle: 180, color: MAGENTA),
-    ]
 
+
+
+    @ui_base = Layout.rect(
+      row: -1,
+      col: -1,
+      w: 3,
+      h: 14,
+      include_row_gutter: true,
+      include_col_gutter: true,
+    ).merge(primitive_marker: :solid, **UI_BASE_COLOR.to_h)
+
+
+
+
+
+
+    # @components = [
+    #   Wall.new(pos: { x: 400, y: 300 }, w: 20, h: 500, angle: 20),
+    #   Emitter.new(pos: { x: 200, y: 200 }, angle: 0, color: RED),
+    #   Emitter.new(pos: { x: 200, y: 500 }, angle: 270, color: BLUE),
+    #   Emitter.new(pos: { x: 300, y: 500 }, angle: 270, color: GREEN),
+    #   Emitter.new(pos: { x: 200, y: 150 }, angle: 0, color: WHITE),
+    #   Mirror.new(pos: { x: 50, y: 50 }, angle: 45),
+    #   Mirror.new(pos: { x: 50, y: 100 }, angle: 45),
+    #   Mirror.new(pos: { x: 50, y: 150 }, angle: 45),
+    #   Mirror.new(pos: { x: 50, y: 200 }, angle: 45),
+    #   Combiner.new(pos: { x: 50, y: 250 }, angle: 0),
+    #   Splitter.new(pos: { x: 50, y: 300 }, angle: 0),
+    #   Prism.new(pos: { x: 50, y: 350 }, angle: 0),
+    #   Filter.new(pos: { x: 50, y: 400 }, angle: 90, color: RED),
+    #   Receiver.new(pos: { x: 1100, y: 150 }, angle: 180, color: RED),
+    #   Receiver.new(pos: { x: 600, y: 350 }, angle: 90, color: BLUE),
+    #   Receiver.new(pos: { x: 800, y: 250 }, angle: 180, color: MAGENTA),
+    # ]
+
+    @components = []
+    process_components
+  end
+
+  def process_components
     @emitters = @components.grep(Emitter)
     @receivers = @components.grep(Receiver)
     @prisms = @components.grep(Prism)
